@@ -72,13 +72,13 @@ The years were grouped by order date, so we can observe data for the year 2014, 
 
 SQL query :
 
-Select strftime("%Y",orderdate) as Year ,sum(sales) as Total\_Sales , sum(profit) as Total\_Profit
+```Select strftime("%Y",orderdate) as Year ,sum(sales) as Total\_Sales , sum(profit) as Total\_Profit```
 
-FROM Orders
+```FROM Orders```
 
-GROUP by strftime("%Y",orderdate)
+```GROUP by strftime("%Y",orderdate)```
 
-order by strftime("%Y",orderdate) ;
+```order by strftime("%Y",orderdate) ;```
 
 Output:
 
@@ -90,27 +90,27 @@ The data above shows how the profits over the years have steadily increased with
 
 SQL query:
 
-DROP TABLE if EXISTS yeartable1;
+```DROP TABLE if EXISTS yeartable1;```
 
-CREATE TEMPORARY TABLE yeartable1 as 
+```CREATE TEMPORARY TABLE yeartable1 as ```
 
-SELECT strftime('%Y',Orders.OrderDate) as year, sum(sales) as total\_sales
+```SELECT strftime('%Y',Orders.OrderDate) as year, sum(sales) as total\_sales```
 
-from Orders
+```from Orders```
 
-group by strftime('%Y',Orders.OrderDate)
+```group by strftime('%Y',Orders.OrderDate)```
 
-order by orderdate
+```order by orderdate```
 
 LIMIT 4;
 
-SELECT b.year,b.total\_sales ,concat(round(((a.total\_sales-b.total\_sales)/a.total\_sales)\*100,2)," %") as Year\_On\_Growth
+```SELECT b.year,b.total\_sales ,concat(round(((a.total\_sales-b.total\_sales)/a.total\_sales)\*100,2)," %") as Year\_On\_Growth```
 
-from yeartable1 as a 
+```from yeartable1 as a ```
 
-right join yeartable1 as b
+```right join yeartable1 as b```
 
-on a.year-b.year = 1;
+```on a.year-b.year = 1;```
 
 Output:
 
@@ -118,33 +118,33 @@ Output:
 
 The data above shows how the sales over the years have increased despite having a fall in 2015 and most significant growth in 2016 of 23.76% as compared to previous year.
 
-1. What are the total profits and total sales per quarter?
+2.` `** What are the total profits and total sales per quarter?**
 
 This is done to see the periods where our company has been the most impactful. So that in the future, we can tailor our operations where we see fit like maximizing our resources like advertisement, customer service and our overall presence during those times of the year. 
 
 SQL query:
 
-Select strftime('%Y',orderdate) as Year,
+```Select strftime('%Y',orderdate) as Year,```
 
-Case
+```Case```
 
-when strftime('%m',orderdate) in ('01','02','03') THEN 'Q1'
+```when strftime('%m',orderdate) in ('01','02','03') THEN 'Q1'```
 
-when strftime('%m',orderdate) in ('04','05','06') THEN 'Q2'
+```when strftime('%m',orderdate) in ('04','05','06') THEN 'Q2'```
 
-when strftime('%m',orderdate) in ('07','08','09') THEN 'Q3'
+```when strftime('%m',orderdate) in ('07','08','09') THEN 'Q3'```
 
-ELSE 'Q4'
+```ELSE 'Q4'```
 
-end as Ouarter,
+```end as Ouarter,```
 
-sum(sales) as Total\_Sales , sum(profit) as Total\_Profit
+```sum(sales) as Total\_Sales , sum(profit) as Total\_Profit```
 
-from Orders
+```from Orders```
 
-group by Year,Ouarter
+```group by Year,Ouarter```
 
-Order by Year,Ouarter;
+```Order by Year,Ouarter;```
 
 Output:
 
@@ -156,37 +156,37 @@ The data above shows that the period of October, November and December are our b
 
 Let’s get into the regions.
 
-1. What region generates the highest sales and profits ?
+3. ` `**What region generates the highest sales and profits ?**
 
 SQL query:
 
-Select c.region,sum(o.sales) as Total\_Sales, sum(o.profit) as Total\_Profit
+```Select c.region,sum(o.sales) as Total\_Sales, sum(o.profit) as Total\_Profit```
 
-from Customers as c
+```from Customers as c```
 
-join orders as o
+```join orders as o```
 
-On c.CustomerID = o.CustomerID
+```On c.CustomerID = o.CustomerID```
 
-GROUP by c.region
+```GROUP by c.region```
 
-Order by Total\_Profit DESC;
+```Order by Total\_Profit DESC;```
 
-SELECT \* from(
+```SELECT \* from(```
 
-Select c.region,c.State,row\_number() over (partition by c.Region order by sum(o.Profit) desc) as Staterank,sum(o.sales) as Total\_Sales, sum(o.profit) as Total\_Profit
+```Select c.region,c.State,row\_number() over (partition by c.Region order by sum(o.Profit) desc) as Staterank,sum(o.sales) as Total\_Sales, sum(o.profit) as Total\_Profit```
 
-from Customers as c
+```from Customers as c```
 
-join orders as o
+```join orders as o```
 
-On c.CustomerID = o.CustomerID
+```On c.CustomerID = o.CustomerID```
 
-GROUP by c.region,c.State
+```GROUP by c.region,c.State```
 
-Order by c.region,Total\_Profit DESC)
+```Order by c.region,Total\_Profit DESC)```
 
-where Staterank<4;
+```where Staterank<4;```
 
 Output:
 
@@ -198,39 +198,38 @@ The above results shows that West & East regions are the most profitable, on the
 
 Further we drill down region to see Top – 3 performing states in each region.
 
-1. What are the Category-wise total profits and total sales?
+4. ` `**What are the Category-wise total profits and total sales?**
 
 SQL query:
 
-Select category, sum(sales) as Total\_Sales, sum(profit) as Total\_Profit
+```Select category, sum(sales) as Total\_Sales, sum(profit) as Total\_Profit```
 
-From Orders
+```From Orders```
 
-GROUP by category
+```GROUP by category```
+```order by Total\_Profit desc;```
 
-order by Total\_Profit desc;
+```Select category,subcategory, sum(sales) as Total\_Sales, sum(profit) as Total\_Profit```
 
-Select category,subcategory, sum(sales) as Total\_Sales, sum(profit) as Total\_Profit
+```From Orders```
 
-From Orders
+```GROUP by category, subcategory```
 
-GROUP by category, subcategory
+```order by Total\_Profit desc```
 
-order by Total\_Profit desc
+```Limit 5;```
 
-Limit 5;
+```select strftime("%Y",orderdate) as Year,category,concat(round(avg(discount),2)," %") as Average\_Discount from orders```
 
-select strftime("%Y",orderdate) as Year,category,concat(round(avg(discount),2)," %") as Average\_Discount from orders
+```group by year,category```
 
-group by year,category
+```order by year;```
 
-order by year;
+```select strftime("%Y",orderdate) as Year,category,subcategory,concat(round(avg(discount),2)," %") as Average\_Discount from orders```
 
-select strftime("%Y",orderdate) as Year,category,subcategory,concat(round(avg(discount),2)," %") as Average\_Discount from orders
+```group by year,category,subcategory```
 
-group by year,category,subcategory
-
-order by year;
+```order by year;```
 
 Output:
 
@@ -242,15 +241,15 @@ From the above results, we can see that although Furniture category has more sal
 
 Next, we see the top-5 categories in terms of total\_profit. We can also interpret that Phons have the highest margins.
 
-1. The relationship between discount and sales and the total discount per category
+5. ` `**The relationship between discount and sales and the total discount per category**
 
 SQL query:
 
-select strftime("%Y",orderdate) as Year,category,subcategory,concat(round(avg(discount),2)," %") as Average\_Discount , sum(sales) as Total\_Sales from orders
+```select strftime("%Y",orderdate) as Year,category,subcategory,concat(round(avg(discount),2)," %") as Average\_Discount , sum(sales) as Total\_Sales from orders```
 
-group by year,category,subcategory
+```group by year,category,subcategory```
 
-order by year;
+```order by year;```
 
 Output:
 
@@ -262,23 +261,23 @@ We interpreted that, category Office Supplies saw the highest decline of 14k dol
 
 So we can interpret that if we want to increase profits from the Fasteners sub-category, reducing discount is not the way as it has a major impact on sales.
 
-1. How are our top-10 customers in terms of profitability?
+6. ` `**How are our top-10 customers in terms of profitability?**
 
 SQL query:
 
-Select c.customerid,c.customername,c.State,COUNT(distinct(o.OrderID)) as Total\_Orders,sum(o.sales) as Total\_Sales,sum(o.profit) Total\_Profit
+```Select c.customerid,c.customername,c.State,COUNT(distinct(o.OrderID)) as Total\_Orders,sum(o.sales) as Total\_Sales,sum(o.profit) Total\_Profit```
 
-From orders o
+```From orders o```
 
-join Customers c
+```join Customers c```
 
-ON o.CustomerID=c.CustomerID
+```ON o.CustomerID=c.CustomerID```
 
-group by o.CustomerID
+```group by o.CustomerID```
 
-order by Total\_Profit DESC
+```order by Total\_Profit DESC```
 
-limit 10;
+```limit 10;```
 
 Output:
 
@@ -288,21 +287,21 @@ From the above result, we can see our most profitable customers and take multipl
 
 We can also make a rewarding referral program for our top customers as they are most likely to promote of products and also, we want to retain these customers as getting new customers is always more expensive than retaining existing ones.
 
-Lets see which states have highest number of our customers
+7. ` `**Lets see which states have highest number of our customers**
 
 SQL query:
 
-Select State,COUNT(DISTINCT(Customers.customerid)) as Total\_Customers,sum(Orders.sales) as Total\_Sales,sum(Orders.Profit) as Total\_Profit
+```Select State,COUNT(DISTINCT(Customers.customerid)) as Total\_Customers,sum(Orders.sales) as Total\_Sales,sum(Orders.Profit) as Total\_Profit```
 
-from Customers
+```from Customers```
 
-join orders 
+```join orders ```
 
-on Customers.CustomerID=orders.CustomerID
+```on Customers.CustomerID=orders.CustomerID```
 
-Group by state
+```Group by state```
 
-order by Total\_Profit DESC;
+```order by Total\_Profit DESC;```
 
 Output:
 
